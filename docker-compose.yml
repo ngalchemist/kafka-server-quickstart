@@ -1,0 +1,35 @@
+version: '2'
+
+# The HOST listener is for connecting to the cluster from the host machine running Docker
+# The EXTERNAL listener is for connecting to the cluster from a network. Change the EXTERNAL listener IP to the IP of the host machine on the desired network.
+
+services:
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    container_name: zookeeper
+    ports:
+      - '2181:2181'
+    networks:
+      - kafka
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: 'bitnami/kafka:3.4.0-debian-11-r21'
+    container_name: kafka
+    ports:
+      - '9093:9093'
+      - '9094:9094'
+    networks:
+      - kafka
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,HOST:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,HOST://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,HOST://host.docker.internal:9093,EXTERNAL://192.168.1.136:9094
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
+    depends_on:
+      - zookeeper
+networks:
+  kafka:
+    name: kafka-network
