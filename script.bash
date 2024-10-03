@@ -18,7 +18,7 @@ mkdir -p $DIR_CLIENT_CERTS
 openssl genrsa -out $DIR_SERVER/server.key 2048
 
 ## Generate certificate signing request
-openssl req -new -key $DIR_SERVER/server.key -out $DIR_SERVER/server.csr -subj "/C=US/ST=California/L=Los Angeles/O=Your Organization/OU=IT Department/CN=host.docker.internal"
+openssl req -new -key $DIR_SERVER/server.key -out $DIR_SERVER/server.csr -subj "/C=US/ST=California/L=Los Angeles/O=Your Organization/OU=IT Department/CN=localhost"
 
 ## Generate certificate (valid 365 days)
 openssl x509 -req -days 365 -in $DIR_SERVER/server.csr -signkey $DIR_SERVER/server.key -out $DIR_SERVER/server.crt
